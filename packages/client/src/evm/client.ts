@@ -1,9 +1,10 @@
 import { Contract, providers, Signer } from 'ethers';
 
 import { u8aToHex } from '@polkadot/util';
-import {checkAddress, decodeAddress} from '@polkadot/util-crypto';
+import { checkAddress, decodeAddress } from '@polkadot/util-crypto';
 import { BridgeContract, TokenAmount } from './types';
 import { abi } from './xtoken-abi';
+import { ERC20Abi } from './erc20-abi';
 
 export class EVMContractClient {
   private static instance: EVMContractClient;
@@ -29,6 +30,24 @@ export class EVMContractClient {
     return parachainId.toString(16).toUpperCase().padStart(8, '0');
   }
 
+  // QUERIES
+  async getCoinBalance(walletAddress: string): Promise<bigint> {
+    const balance = await this.contract.provider.getBalance(walletAddress);
+    return balance.toBigInt();
+  }
+  async getTokenBalance(
+    tokenAddress: string,
+    walletAddress: string,
+  ): Promise<bigint> {
+    const provider = this.contract.provider;
+    const contract = new Contract(tokenAddress, ERC20Abi, provider);
+    const balance = await contract.balanceOf(walletAddress);
+
+    return balance.toBigInt();
+  }
+
+  // TRANSACTIONS
+
   async bridgeToSubstrate(
     transferToken: TokenAmount,
     feeToken: TokenAmount,
@@ -43,7 +62,7 @@ export class EVMContractClient {
       [feeToken.currency, feeToken.amount.toString()],
       [transferToken.currency, transferToken.amount.toString()],
     ];
-    console.log('currencies', currencies)
+    console.log('currencies', currencies);
     const feeItem = 0;
     const destination = [
       1,
@@ -52,7 +71,7 @@ export class EVMContractClient {
         `0x01${this.toHexAddress(destinationAddress).replace('0x', '')}00`,
       ],
     ];
-    console.log('destination', destination)
+    console.log('destination', destination);
 
     const weight = 1000000000;
 
@@ -62,8 +81,7 @@ export class EVMContractClient {
         feeItem,
         destination,
         weight,
-        { gasLimit: 13000000 },
-        // { gasLimit: gasLimitWithMargin },
+        { gasLimit: 1300000 },
       );
     return await transaction.wait();
   }

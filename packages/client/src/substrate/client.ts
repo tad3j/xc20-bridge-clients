@@ -1,13 +1,18 @@
-import {ApiPromise, Keyring, SubmittableResult, WsProvider,} from '@polkadot/api';
-import {KeyringPair} from '@polkadot/keyring/types';
+import {
+  ApiPromise,
+  Keyring,
+  SubmittableResult,
+  WsProvider,
+} from '@polkadot/api';
+import { KeyringPair } from '@polkadot/keyring/types';
 import '@polkadot/api-augment';
 import '@polkadot/types-augment';
-import {SubmittableExtrinsic} from '@polkadot/api/types';
-import {ISubmittableResult} from '@polkadot/types/types';
-import {sleep, timeout} from '../util';
-import {Signer} from '@polkadot/types/types/extrinsic';
-import {InjectedAccountWithMeta} from '@polkadot/extension-inject/types';
-import * as ethers from "ethers";
+import { SubmittableExtrinsic } from '@polkadot/api/types';
+import { ISubmittableResult } from '@polkadot/types/types';
+import { sleep, timeout } from '../util';
+import { Signer } from '@polkadot/types/types/extrinsic';
+import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
+import * as ethers from 'ethers';
 
 export class SubstrateContractClient {
   private static instance: SubstrateContractClient;
@@ -179,13 +184,33 @@ export class SubstrateContractClient {
     return this.account.address;
   }
 
+  // QUERIES
+
+  async getCoinBalance(walletAddress: string) {
+    const { data } = await this.api.query.system.account(walletAddress);
+
+    return data.free.toBigInt();
+  }
+
+  async getTokenBalance(tokenId: number, walletAddress: string) {
+    const balance = await this.api.query.assets.account(tokenId, walletAddress);
+
+    if (balance.isEmpty) {
+      return BigInt(0);
+    }
+
+    return balance.unwrap().balance.toBigInt();
+  }
+
+  // TRANSACTIONS
+
   async bridgeToEvm(
     parachainId: number,
     addressTo: string,
     assetId: number,
     transferAmount: bigint,
   ) {
-    if(!ethers.utils.isAddress(addressTo)) {
+    if (!ethers.utils.isAddress(addressTo)) {
       throw new Error('Destination address is invalid');
     }
     const destinationMultiLocation = {

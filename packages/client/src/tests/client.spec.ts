@@ -28,9 +28,9 @@ describe('xc-20 bridge client', () => {
     test('bridge from substrate to evm', async () => {
       const result = await client.bridgeToEvm(
         1000,
-        '0x96Ac3ed608b69cB86ed4A8E960DBDB9910199347',
+        '0x4C2A866EB59511a6aD78db5cd4970464666b745a',
         1337,
-        BigInt('999980000000000000000'),
+        BigInt('1000000000000000000'),
       );
       console.log('hash', result.txHash.toHex())
       console.log('blockNumber', result.blockNumber.toHuman())
@@ -60,7 +60,7 @@ describe('xc-20 bridge client', () => {
       const receipt = await client.bridgeToSubstrate(
         {
           currency: Currency.XC_BTR,
-          amount: BigInt('10000'),
+          amount: BigInt('1000000000000000000'),
         },
         {
           currency: Currency.XC_TUSDC,

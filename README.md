@@ -17,4 +17,12 @@ Bridges `transferAmount` of tokens with id `assetId` to parachain with id `parac
 - destinationParachainId: number - parachain to bridge to
 - destinationAddress: string - address on parachain to bridge to
 
-Bridges token defined by `transferToken` to parachain with id `destinationParachainId` and address `destinationParachainId`. For bridging fees are paid with token defined with `feeToken`.  
+Bridges token defined by `transferToken` to parachain with id `destinationParachainId` and address `destinationParachainId`. For bridging fees are paid with token defined with `feeToken`.
+
+## Client Tests
+
+Two tests to test bridging on each client.
+
+## Browser App
+
+Simple app to showcase bridging from one chain to another and vice versa.
