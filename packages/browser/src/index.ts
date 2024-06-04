@@ -116,21 +116,17 @@ async function bridgeToEvm() {
   }
   console.log('feeTokenBalance', feeTokenBalance);
 
-  try {
-    const result = await substrateClient.bridgeToEvm(
-      1000,
-      destinationAddress,
-      bridgedAssetId,
-      bridgedAssetAmount,
-    );
-    console.log('hash', result.txHash.toHex());
-    console.log('blockNumber', result.blockNumber.toHuman());
-    console.log('status', result.status.toHuman());
-    for (const e of result.events) {
-      console.log('event', e.toHuman());
-    }
-  } finally {
-    await substrateClient.destroyInstance();
+  const result = await substrateClient.bridgeToEvm(
+    1000,
+    destinationAddress,
+    bridgedAssetId,
+    bridgedAssetAmount,
+  );
+  console.log('hash', result.txHash.toHex());
+  console.log('blockNumber', result.blockNumber.toHuman());
+  console.log('status', result.status.toHuman());
+  for (const e of result.events) {
+    console.log('event', e.toHuman());
   }
 }
 
@@ -144,4 +140,8 @@ window.onload = () => {
     bridgeToEvmButton.addEventListener('click', bridgeToEvm);
   }
   loadClients().catch(console.error);
+};
+
+window.onbeforeunload = function () {
+  substrateClient.destroyInstance().catch(console.error);
 };
