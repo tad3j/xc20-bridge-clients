@@ -1,10 +1,10 @@
-export enum Currency {
+export enum Token {
   XC_TUSDC = '0xFFfFFfFfa92dCFE0B611495d1EbcB6EDF525f0a4',
   XC_BTR = '0xfFfFFfff46643f5a151c70C6a972559497530C45',
 }
 
 export interface TokenAmount {
-  currency: Currency;
+  token: Token;
   amount: bigint;
 }
 

@@ -59,8 +59,8 @@ export class EVMContractClient {
       throw new Error('Destination address is invalid');
     }
     const currencies = [
-      [feeToken.currency, feeToken.amount.toString()],
-      [transferToken.currency, transferToken.amount.toString()],
+      [feeToken.token, feeToken.amount.toString()],
+      [transferToken.token, transferToken.amount.toString()],
     ];
     console.log('currencies', currencies);
     const feeItem = 0;

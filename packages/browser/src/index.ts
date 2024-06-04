@@ -2,7 +2,7 @@ import {
   SubstrateContractClient,
   EVMContractClient,
   BridgeContract,
-  Currency,
+  Token,
 } from 'xc20-bridge';
 
 import { cryptoWaitReady } from '@polkadot/util-crypto';
@@ -42,11 +42,11 @@ async function bridgeToSubstrate() {
   const signerAddress = await evmSigner.getAddress();
   const destinationAddress = '5F1JYDkmcfkZtANZ8C8yzqJUKmqvjLSZZ58DtNHXDJvV7ZfX';
   const bridgedToken = {
-    currency: Currency.XC_BTR,
+    token: Token.XC_BTR,
     amount: BigInt('1000000000000000000'),
   };
   const bridgeFeeToken = {
-    currency: Currency.XC_TUSDC,
+    token: Token.XC_TUSDC,
     amount: BigInt('40000000'),
   };
 
@@ -59,7 +59,7 @@ async function bridgeToSubstrate() {
 
   // sufficient balance of bridging asset
   const bridgedTokenBalance = await evmClient.getTokenBalance(
-    bridgedToken.currency,
+    bridgedToken.token,
     signerAddress,
   );
   console.log('bridgedTokenBalance', bridgedTokenBalance);
@@ -69,7 +69,7 @@ async function bridgeToSubstrate() {
 
   // sufficient balance of bridge fee tokens
   const bridgeFeeTokenBalance = await evmClient.getTokenBalance(
-    bridgeFeeToken.currency,
+    bridgeFeeToken.token,
     signerAddress,
   );
   console.log('bridgeFeeTokenBalance', bridgeFeeTokenBalance);
