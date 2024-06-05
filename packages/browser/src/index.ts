@@ -47,7 +47,7 @@ async function bridgeToSubstrate() {
   };
   const bridgeFeeToken = {
     token: Token.XC_TUSDC,
-    amount: BigInt('40000000'),
+    amount: BigInt('1000000'),
   };
 
   // existential balance of wallet we are bridging to
