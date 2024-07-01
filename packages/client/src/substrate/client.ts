@@ -13,6 +13,7 @@ import { sleep, timeout } from '../util';
 import { Signer } from '@polkadot/types/types/extrinsic';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import * as ethers from 'ethers';
+import { BN } from '@polkadot/util';
 
 export class SubstrateContractClient {
   private static instance: SubstrateContractClient;
@@ -244,7 +245,29 @@ export class SubstrateContractClient {
       0,
       'Unlimited',
     );
+    const paymentInfo = await tx.paymentInfo(this.account.address);
+    const fee = this.toChainDecimals(paymentInfo.partialFee);
+    console.log(
+      'paymentInfo.partialFee',
+      // parseFloat(fee.div.toString() + '.' + fee.mod.toString()),
+      fee.toString(),
+    );
 
     return await this.signAndSend(tx);
+  }
+
+  // toChainDecimals(value: BN) {
+  //   const decimals = this.api.registry.chainDecimals[0];
+  //
+  //   return value.toNumber() / Math.pow(10, decimals);
+  // }
+
+  toChainDecimals(value: BN) {
+    const decimals = this.api.registry.chainDecimals[0];
+    const base = new BN(10).pow(new BN(decimals));
+    const integerPart = value.div(base);
+    const fractionalPart = value.mod(base).toString().padStart(decimals, '0');
+
+    return `${integerPart.toString()}.${fractionalPart}`;
   }
 }

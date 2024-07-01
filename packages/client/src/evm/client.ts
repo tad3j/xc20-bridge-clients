@@ -1,4 +1,4 @@
-import { Contract, providers, Signer } from 'ethers';
+import { Contract, providers, Signer, utils } from 'ethers';
 
 import { u8aToHex } from '@polkadot/util';
 import { checkAddress, decodeAddress } from '@polkadot/util-crypto';
@@ -75,13 +75,27 @@ export class EVMContractClient {
 
     const weight = 1000000000;
 
+    const gasLimit = await this.contract.estimateGas.transferMultiCurrencies(
+      currencies,
+      feeItem,
+      destination,
+      weight,
+    );
+    const block = await this.contract.provider.getBlock('latest');
+    const baseFeePerGas = block.baseFeePerGas;
+    const priorityFeeWei = utils.parseUnits('1', 'gwei');
+    const totalGasPriceWei = baseFeePerGas.add(priorityFeeWei);
+    const transactionCostWei = totalGasPriceWei.mul(gasLimit);
+    const transactionCostEth = utils.formatEther(transactionCostWei);
+    console.log('transactionCostEth', transactionCostEth);
+
     const transaction: providers.TransactionResponse =
       await this.contract.transferMultiCurrencies(
         currencies,
         feeItem,
         destination,
         weight,
-        { gasLimit: 1300000 },
+        { gasLimit },
       );
     return await transaction.wait();
   }
